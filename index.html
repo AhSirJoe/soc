@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Systems of Context — Investment Thesis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #1a1a25;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a0b0;
+            --text-muted: #606070;
+            --accent-cyan: #00d4ff;
+            --accent-purple: #8b5cf6;
+            --accent-pink: #ec4899;
+            --accent-green: #10b981;
+            --accent-amber: #f59e0b;
+            --border-subtle: rgba(255,255,255,0.08);
+            --shadow-glow: 0 0 40px rgba(0,212,255,0.15);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { scroll-behavior: smooth; scroll-snap-type: y mandatory; height: 100%; }
+        body {
+            font-family: 'Inter', -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        .slide {
+            width: 100vw;
+            min-height: 100vh;
+            scroll-snap-align: start;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 4rem 6vw;
+            position: relative;
+            overflow: hidden;
+        }
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle at 30% 20%, rgba(0,212,255,0.03) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 80%, rgba(139,92,246,0.03) 0%, transparent 50%);
+            animation: float 20s ease-in-out infinite;
+            pointer-events: none;
+        }
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(-20px, -20px) rotate(5deg); }
+        }
+        .content { max-width: 1200px; margin: 0 auto; width: 100%; position: relative; z-index: 1; }
+        h1 {
+            font-size: clamp(2.5rem, 6vw, 5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #fff 0%, var(--accent-cyan) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        h2 {
+            font-size: clamp(1.8rem, 4vw, 3rem);
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1.5rem;
+            color: var(--text-primary);
+        }
+        h3 {
+            font-size: clamp(1.1rem, 2vw, 1.5rem);
+            font-weight: 600;
+            color: var(--accent-cyan);
+            margin-bottom: 0.75rem;
+        }
+        .subtitle {
+            font-size: clamp(1rem, 1.5vw, 1.25rem);
+            color: var(--text-secondary);
+            font-weight: 400;
+            max-width: 700px;
+        }
+        .meta {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            margin-top: 2rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border-subtle);
+        }
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 16px;
+            padding: 1.75rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-purple));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-glow);
+            border-color: rgba(0,212,255,0.3);
+        }
+        .card:hover::before { opacity: 1; }
+        .card-number {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--accent-cyan);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        .card h3 { font-size: 1.25rem; margin-bottom: 0.75rem; }
+        .card p { color: var(--text-secondary); font-size: 0.95rem; line-height: 1.6; }
+        .value-chain {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            margin: 2rem 0;
+            max-width: 800px;
+        }
+        .layer {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            padding: 1.25rem 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--border-subtle);
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .layer::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            border-radius: 12px 0 0 12px;
+        }
+        .layer-1::before { background: var(--accent-green); }
+        .layer-2::before { background: var(--accent-amber); }
+        .layer-3::before { background: var(--accent-cyan); }
+        .layer-4::before { background: var(--accent-purple); }
+        .layer-5::before { background: var(--accent-pink); }
+        .layer:hover { transform: translateX(8px); background: var(--bg-secondary); }
+        .layer-num {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            font-weight: 600;
+            width: 24px;
+            text-align: center;
+        }
+        .layer-1 .layer-num { color: var(--accent-green); }
+        .layer-2 .layer-num { color: var(--accent-amber); }
+        .layer-3 .layer-num { color: var(--accent-cyan); }
+        .layer-4 .layer-num { color: var(--accent-purple); }
+        .layer-5 .layer-num { color: var(--accent-pink); }
+        .layer-content h4 { font-size: 1.1rem; font-weight: 600; margin-bottom: 0.25rem; }
+        .layer-content p { font-size: 0.875rem; color: var(--text-secondary); }
+        .table-container {
+            overflow-x: auto;
+            margin-top: 2rem;
+            border-radius: 12px;
+            border: 1px solid var(--border-subtle);
+        }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        th {
+            background: var(--bg-card);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+            color: var(--text-secondary);
+            border-bottom: 1px solid var(--border-subtle);
+            white-space: nowrap;
+        }
+        td { padding: 1rem; border-bottom: 1px solid var(--border-subtle); color: var(--text-secondary); }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+        .priority-high { color: var(--accent-pink); font-weight: 600; }
+        .priority-med { color: var(--accent-amber); }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin: 2rem 0;
+        }
+        .stat {
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--bg-card);
+            border-radius: 12px;
+            border: 1px solid var(--border-subtle);
+        }
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .stat-label { font-size: 0.875rem; color: var(--text-secondary); margin-top: 0.5rem; }
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        @media (max-width: 900px) {
+            .comparison-grid { grid-template-columns: 1fr; }
+            .card-grid { grid-template-columns: 1fr; }
+            .slide { padding: 2rem 4vw; }
+        }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .animate-in { animation: fadeInUp 0.8s ease-out forwards; }
+        .delay-1 { animation-delay: 0.1s; }
+        .delay-2 { animation-delay: 0.2s; }
+        .delay-3 { animation-delay: 0.3s; }
+        .delay-4 { animation-delay: 0.4s; }
+        .delay-5 { animation-delay: 0.5s; }
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--text-muted);
+            font-size: 0.75rem;
+            animation: bounce 2s infinite;
+        }
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-10px); }
+            60% { transform: translateX(-50%) translateY(-5px); }
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background: rgba(0,212,255,0.1);
+            color: var(--accent-cyan);
+            border-radius: 100px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1rem;
+        }
+        .quote {
+            font-size: 1.25rem;
+            font-style: italic;
+            color: var(--text-secondary);
+            border-left: 3px solid var(--accent-cyan);
+            padding-left: 1.5rem;
+            margin: 1.5rem 0;
+        }
+        .section-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--accent-cyan);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <section class="slide">
+        <div class="content">
+            <div class="badge animate-in">Investment Thesis</div>
+            <h1 class="animate-in delay-1">SYSTEMS OF<br>CONTEXT</h1>
+            <p class="subtitle animate-in delay-2">The Foundational Infrastructure Layer for the Agentic AI Era</p>
+            <div class="meta animate-in delay-3">
+                Sierra Ventures / Columbia Venture Fellowship<br>
+                February 2026
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <span>Scroll to explore</span>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M12 5v14M5 12l7 7 7-7"/>
+            </svg>
+        </div>
+    </section>
+
+    <section class="slide">
+        <div class="content">
+            <div class="section-label animate-in">01 / Executive Summary</div>
+            <h2 class="animate-in delay-1">The Operating System of the Agentic Enterprise</h2>
+            <p class="quote animate-in delay-2">
+                The companies that own the Govern and Deliver layers of this stack will define the operating system of the agentic enterprise and will be the Salesforce of the next decade.
+            </p>
+            <div class="stats-grid animate-in delay-3">
+                <div class="stat">
+                    <div class="stat-value">40%</div>
+                    <div class="stat-label">Enterprise apps with AI agents by 2026</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">$199B</div>
+                    <div class="stat-label">Agentic AI market by 2030</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">44%</div>
+                    <div class="stat-label">Projected CAGR</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">$37B</div>
+                    <div class="stat-label">Enterprise AI spend 2025</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide">
+        <div class="content">
+            <div class="section-label animate-in">02 / Core Concept</div>
+            <h2 class="animate-in delay-1">What is a System of Context?</h2>
+            <p class="subtitle animate-in delay-2">
+                Unlike a System of Record (what happened) or System of Engagement (how users interact), 
+                a System of Context captures why decisions were made, who was involved, what was known, and what should happen next.
+            </p>
+            <div class="comparison-grid animate-in delay-3">
+                <div class="card">
+                    <h3>System of Record</h3>
+                    <p>Stores what happened. Static data, historical transactions, state at a point in time.</p>
+                </div>
+                <div class="card">
+                    <h3>System of Engagement</h3>
+                    <p>Manages how users interact. Workflows, notifications, collaboration interfaces.</p>
+                </div>
+                <div class="card" style="border-color: var(--accent-cyan);">
+                    <h3 style="color: var(--accent-cyan);">System of Context</h3>
+                    <p>Captures why decisions were made, who was involved, reasoning, relationships, temporal state. The memory and intelligence layer for AI agents.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide">
+        <div class="content">
+            <div class="section-label animate-in">03 / Framework</div>
+            <h2 class="animate-in delay-1">5-Layer Value Chain</h2>
+            <p class="subtitle animate-in delay-2">
+                Investment moat concentrates at layers 4-5 (Govern and Deliver). 
+                Screen out companies that stop at layer 3.
+            </p>
+            <div class="value-chain animate-in delay-3">
+                <div class="layer layer-1">
+                    <div class="layer-num">01</div>
+                    <div class="layer-content">
+                        <h4 style="color: var(--accent-green);">Capture</h4>
+                        <p>Ingest signals from human + system activity. Commodity — avoid as sole moat.</p>
+                    </div>
+                </div>
+                <div class="layer layer-2">
+                    <div class="layer-num">02</div>
+                    <div class="layer-content">
+                        <h4 style="color: var(--accent-amber);">Structure</h4>
+                        <p>Parse, resolve entities, build knowledge graph. Domain ontology = defensible.</p>
+                    </div>
+                </div>
+                <div class="layer layer-3">
+                    <div class="layer-num">03</div>
+                    <div class="layer-content">
+                        <h4 style="color: var(--accent-cyan);">Memory</h4>
+                        <p>Persist context across time and sessions. Bitemporal reasoning = high moat.</p>
+                    </div>
+                </div>
+                <div class="layer layer-4">
+                    <div class="layer-num">04</div>
+                    <div class="layer-content">
+                        <h4 style="color: var(--accent-purple);">Govern</h4>
+                        <p>Policy enforcement, access control, audit trail. Least commoditized; highest VC-scale moat.</p>
+                    </div>
+                </div>
+                <div class="layer layer-5">
+                    <div class="layer-num">05</div>
+                    <div class="layer-content">
+                        <h4 style="color: var(--accent-pink);">Deliver</h4>
+                        <p>Serve right context to right agent at right moment. Real-time streaming = greenfield.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide">
+        <div class="content">
+            <div class="section-label animate-in">04 / Market Dynamics</div>
+            <h2 class="animate-in delay-1">Four Converging Tailwinds</h2>
+            <div class="card-grid">
+                <div class="card animate-in delay-1">
+                    <div class="card-number">01</div>
+                    <h3>Agentic AI Inflection</h3>
+                    <p>Multi-step, autonomous AI actions are production-grade (2025). Agents need persistent, governed context to act reliably.</p>
+                </div>
+                <div class="card animate-in delay-2">
+                    <div class="card-number">02</div>
+                    <h3>Protocol Standardization</h3>
+                    <p>MCP/A2A protocol standardization (Nov 2025 / Google I/O 2025) — Universal context handoff between agents is now a standard.</p>
+                </div>
+                <div class="card animate-in delay-3">
+                    <div class="card-number">03</div>
+                    <h3>Consumer Validation</h3>
+                    <p>300-400K users chose autonomous context-aware agents within weeks. Enterprise typically lags consumer by 18-36 months.</p>
+                </div>
+                <div class="card animate-in delay-4">
+                    <div class="card-number">04</div>
+                    <h3>Regulatory Mandate</h3>
+                    <p>EU AI Act (Aug 2025), SEC AI disclosures, HIPAA agentic guidance forcing enterprises to govern and audit AI context.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide">
+        <div class="content" style="max-width: 1000px;">
+            <div class="section-label animate-in">05 / Investment Opportunities</div>
+            <h2 class="animate-in delay-1">9 White Spaces (Prioritized)</h2>
+            <div class="table-container animate-in delay-2">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Vertical</th>
+                            <th>Investment Thesis</th>
+                            <th>Priority</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>7.1</td>
+                            <td><strong>Agentic Context Infrastructure</strong></td>
+                            <td>Core architectural bottleneck as enterprise multi-agent deployments scale</td>
+                            <td class="priority-high">***</td>
+                        </tr>
+                        <tr>
+                            <td>7.6</td>
+                            <td><strong>Legal / LegalTech</strong></td>
+                            <td>$29-34B market; contract analysts spend 60-70% of time hunting context</td>
+                            <td class="priority-high">***</td>
+                        </tr>
+                        <tr>
+                            <td>7.7</td>
+                            <td><strong>Financial Services / WealthTech</strong></td>
+                            <td>Advisor relationship history walks out when advisors retire or switch</td>
+                            <td class="priority-high">***</td>
+                        </tr>
+                        <tr>
+                            <td>7.8</td>
+                            <td><strong>Manufacturing / Industrial</strong></td>
+                            <td>10,000 Baby Boomers retire daily carrying irreplaceable machine knowledge</td>
+                            <td class="priority-high">***</td>
+                        </tr>
+                        <tr>
+                            <td>7.9</td>
+                            <td><strong>Supply Chain</strong></td>
+                            <td>Procurement managers negotiate $20M+ contracts missing supplier risk history</td>
+                            <td class="priority-high">***</td>
+                        </tr>
+                        <tr>
+                            <td>7.2</td>
+                            <td>Healthcare Staffing</td>
+                            <td>HIPAA-grade credential + compliance context at point of placement</td>
+                            <td class="priority-med">**</td>
+                        </tr>
+                        <tr>
+                            <td>7.3</td>
+                            <td>Recruiting / Talent</td>
+                            <td>Qualitative interview context lost after every hire despite ATS spend</td>
+                            <td class="priority-med">**</td>
+                        </tr>
+                        <tr>
+                            <td>7.4</td>
+                            <td>Customer Success</td>
+                            <td>Churn signals split across CRM, support, and product analytics</td>
+                            <td class="priority-med">**</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide">
+        <div class="content" style="max-width: 1000px;">
+            <div class="section-label animate-in">06 / Portfolio Analysis</div>
+            <h2 class="animate-in delay-1">Top Investment Candidates</h2>
+            <div class="table-container animate-in delay-2">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Company</th>
+                            <th>Vertical</th>
+                            <th>Funding</th>
+                            <th>Key Insight</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>In-House Health</strong></td>
+                            <td>Healthcare Staffing</td>
+                            <td>$5.4M, NEA</td>
+                            <td>800+ nurses, founder from Stellar Health, measurable agency fee displacement</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Metaview</strong></td>
+                            <td>Recruiting</td>
+                            <td>Undisclosed</td>
+                            <td>14+ work weeks saved at Cockroach Labs; moat depends on Govern/Deliver</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Cimulate</strong></td>
+                            <td>E-Commerce</td>
+                            <td>Undisclosed</td>
+                            <td>10%+ conversion lift = CFO-grade ROI; outcome-based pricing trajectory</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Juna.ai</strong></td>
+                            <td>Manufacturing</td>
+                            <td>$7.5M, Kleiner Perkins</td>
+                            <td>Industrial maintenance context; KP validation at Seed = high signal</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Allie AI</strong></td>
+                            <td>Manufacturing</td>
+                            <td>$8.3M, Voyager</td>
+                            <td>Tribal knowledge capture from plant floor workers</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Spellbook</strong></td>
+                            <td>Legal</td>
+                            <td>$80.9M, Khosla</td>
+                            <td>Series B traction validates demand; moat depends on Govern layer</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Runlayer</strong></td>
+                            <td>Agentic Security</td>
+                            <td>$11M, Khosla</td>
+                            <td>MCP-layer zero-trust; only protocol-layer agentic security company</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide">
+        <div class="content">
+            <div class="section-label animate-in">07 / Technical Deep Dive</div>
+            <h2 class="animate-in delay-1">Why Each Layer is Hard</h2>
+            <div class="card-grid">
+                <div class="card animate-in delay-1">
+                    <h3>Entity Resolution</h3>
+                    <p>"Same nurse in 5 systems" has no clean open-source solution. N² pairwise comparison problem at scale.</p>
+                </div>
+                <div class="card animate-in delay-2">
+                    <h3>GraphRAG vs VectorRAG</h3>
+                    <p>GraphRAG outperforms on multi-hop reasoning (0% accuracy with 5+ entity chains in pure vector).</p>
+                </div>
+                <div class="card animate-in delay-3">
+                    <h3>Bitemporal Memory</h3>
+                    <p>LLMs are stateless. Ghost facts, context overflow, temporal blindness require bitemporal architecture.</p>
+                </div>
+                <div class="card animate-in delay-4">
+                    <h3>Real-Time Delivery</h3>
+                    <p>Batch context is wrong for operational agents. Need hybrid: batch cold layer + CDC streaming hot layer.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide">
+        <div class="content">
+            <div class="section-label animate-in">08 / Outlook</div>
+            <h2 class="animate-in delay-1">12-Month Technical Agenda</h2>
+            <p class="subtitle animate-in delay-2">
+                AI moves from decision support to decision execution. Three unsolved problems will define the next generation:
+            </p>
+            <div class="card-grid">
+                <div class="card animate-in delay-1">
+                    <div class="card-number">Unsolved #1</div>
+                    <h3>Temporal Memory at Scale</h3>
+                    <p>Bitemporal graph stores answering "what did the agent know at time T?" with sub-300ms latency. Zep, Cognee, Letta closest.</p>
+                </div>
+                <div class="card animate-in delay-2">
+                    <div class="card-number">Unsolved #2</div>
+                    <h3>Contextual Entity Disambiguation</h3>
+                    <p>Same query from two users in different roles resolves to two different but both-correct outputs. Requires years of org data.</p>
+                </div>
+                <div class="card animate-in delay-3">
+                    <div class="card-number">Unsolved #3</div>
+                    <h3>Agentic Governance by Intent</h3>
+                    <p>Policy engines evaluating what an agent is trying to do, not just what data it accesses. Lumia AI only pure-play.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="slide">
+        <div class="content">
+            <div class="section-label animate-in">09 / Conclusion</div>
+            <h2 class="animate-in delay-1">The Investment Window</h2>
+            <p class="quote animate-in delay-2">
+                Vector databases and basic agent orchestration frameworks commoditize to near-zero margin. Enterprise deployment failure rates peak in H2 2026 as organizations discover production context failures invisible during piloting. This peak failure period is the highest-urgency investment window for SoC infrastructure companies.
+            </p>
+            <div class="stats-grid animate-in delay-3">
+                <div class="stat">
+                    <div class="stat-value">H2 2026</div>
+                    <div class="stat-label">Peak failure window = highest urgency</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">Layers 4-5</div>
+                    <div class="stat-label">Govern and Deliver = moat concentration</div>
+                </div>
+                <div class="stat">
+                    <div class="stat-value">Agentic</div>
+                    <div class="stat-label">MCP-native = portfolio gap priority</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        const observerOptions = { root: null, rootMargin: '0px', threshold: 0.1 };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.querySelectorAll('.animate-in').forEach(el => {
+                        el.style.opacity = '1';
+                    });
+                }
+            });
+        }, observerOptions);
+        document.querySelectorAll('.slide').forEach(slide => { observer.observe(slide); });
+        document.querySelectorAll('.animate-in').forEach(el => { el.style.opacity = '0'; });
+    </script>
+</body>
+</html>
